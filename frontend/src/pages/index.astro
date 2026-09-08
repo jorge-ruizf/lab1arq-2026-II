@@ -1,0 +1,221 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const API_BASE = 'http://localhost:8088/api';
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Gestión de Clientes</h1>
+			<p>Consulta todos los clientes o busca uno por su ID.</p>
+
+			<div class="controls">
+				<button id="btn-all" class="btn btn-primary">Cargar todos los clientes</button>
+
+				<div class="search-box">
+					<input id="search-id" type="number" placeholder="ID del cliente" min="1" />
+					<button id="btn-search" class="btn btn-secondary">Buscar por ID</button>
+				</div>
+			</div>
+
+			<p id="status" class="status"></p>
+
+			<div id="results" class="results-list">
+				<p class="empty-state">Aún no has cargado ningún cliente.</p>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 2rem 1rem;
+	}
+
+	h1 {
+		margin-bottom: 0.25rem;
+	}
+
+	.controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		align-items: center;
+		margin: 1.5rem 0;
+	}
+
+	.search-box {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	input[type='number'] {
+		padding: 0.5rem 0.75rem;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+		width: 140px;
+		font-size: 0.95rem;
+	}
+
+	.btn {
+		padding: 0.55rem 1.1rem;
+		border: none;
+		border-radius: 8px;
+		font-size: 0.95rem;
+		cursor: pointer;
+		transition: opacity 0.15s ease;
+	}
+
+	.btn:hover {
+		opacity: 0.85;
+	}
+
+	.btn-primary {
+		background: #1a1a2e;
+		color: white;
+	}
+
+	.btn-secondary {
+		background: #eee;
+		color: #1a1a2e;
+	}
+
+	.status {
+		min-height: 1.2rem;
+		font-size: 0.9rem;
+		color: #b00020;
+	}
+
+	.results-list {
+		margin-top: 1rem;
+		max-height: 480px;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding-right: 0.25rem;
+	}
+
+	.empty-state {
+		color: #777;
+		font-style: italic;
+	}
+
+	.customer-card {
+		border: 1px solid #e2e2e2;
+		border-radius: 10px;
+		padding: 1rem 1.25rem;
+		background: #fafafa;
+	}
+
+	.customer-card h3 {
+		margin: 0 0 0.4rem 0;
+		font-size: 1.05rem;
+	}
+
+	.customer-card .meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
+		font-size: 0.9rem;
+		color: #444;
+	}
+
+	.customer-card .meta span strong {
+		color: #111;
+	}
+</style>
+
+<script define:vars={{ API_BASE }}>
+	const btnAll = document.getElementById('btn-all');
+	const btnSearch = document.getElementById('btn-search');
+	const searchInput = document.getElementById('search-id');
+	const resultsDiv = document.getElementById('results');
+	const statusEl = document.getElementById('status');
+
+	function setStatus(msg, isError = true) {
+		statusEl.textContent = msg;
+		statusEl.style.color = isError ? '#b00020' : '#2e7d32';
+	}
+
+	function renderCustomers(customers) {
+		if (!customers || customers.length === 0) {
+			resultsDiv.innerHTML = '<p class="empty-state">No se encontraron clientes.</p>';
+			return;
+		}
+
+		resultsDiv.innerHTML = customers
+			.map(
+				(c) => `
+			<div class="customer-card">
+				<h3>${c.firstName ?? ''} ${c.lastName ?? ''}</h3>
+				<div class="meta">
+					<span><strong>ID:</strong> ${c.id ?? '-'}</span>
+					<span><strong>Cuenta:</strong> ${c.accountNumber ?? '-'}</span>
+					<span><strong>Saldo:</strong> $${c.balance ?? '0'}</span>
+				</div>
+			</div>
+		`
+			)
+			.join('');
+	}
+
+	async function loadAllCustomers() {
+		setStatus('Cargando clientes...', false);
+		try {
+			const res = await fetch(`${API_BASE}/customers`);
+			if (!res.ok) throw new Error(`Error ${res.status}`);
+			const data = await res.json();
+			renderCustomers(data);
+			setStatus(`${data.length} cliente(s) cargado(s).`, false);
+		} catch (err) {
+			setStatus('No se pudo conectar con el backend. ¿Está corriendo en el puerto 8088?');
+			resultsDiv.innerHTML = '<p class="empty-state">Error al cargar los datos.</p>';
+		}
+	}
+
+	async function searchCustomerById() {
+	    const id = searchInput.value.trim();
+	    if (!id) {
+	        setStatus('Ingresa un ID válido.');
+	        return;
+	    }
+
+	    setStatus('Buscando cliente...', false);
+	    try {
+	        const res = await fetch(`${API_BASE}/customers/${id}`);
+
+	        if (res.status === 404) {
+	            const errText = await res.text(); // texto plano, no json
+	            renderCustomers([]);
+	            setStatus(errText || `No existe un cliente con ID ${id}.`);
+	            return;
+	        }
+
+	        if (!res.ok) throw new Error(`Error ${res.status}`);
+
+	        const data = await res.json();
+	        renderCustomers([data]);
+	        setStatus('Cliente encontrado.', false);
+	    } catch (err) {
+	        setStatus('No se pudo conectar con el backend. ¿Está corriendo en el puerto 8088?');
+	    }
+	}
+
+	btnAll.addEventListener('click', loadAllCustomers);
+	btnSearch.addEventListener('click', searchCustomerById);
+	searchInput.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') searchCustomerById();
+	});
+</script>

@@ -1,0 +1,311 @@
+---
+import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { Image } from 'astro:assets';
+
+const API_BASE = 'http://localhost:8088/api';
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title="Transacciones" description="Transferencias y consulta de movimientos" />
+		<style>
+			main {
+				width: calc(100% - 2em);
+				max-width: 100%;
+				margin: 0;
+			}
+			.hero-image {
+				width: 100%;
+			}
+			.hero-image img {
+				display: block;
+				margin: 0 auto;
+				border-radius: 12px;
+				box-shadow: var(--box-shadow);
+			}
+			.prose {
+				width: 920px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 1em;
+				color: rgb(var(--gray-dark));
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: space-between;
+			}
+                        .prose > div {
+                                width:45%;
+                        }
+			.tx-form {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				max-width: 480px;
+				margin-top: 1rem;
+			}
+			.field {
+				display: flex;
+				flex-direction: column;
+				gap: 0.3rem;
+			}
+			label {
+				font-size: 0.88rem;
+				font-weight: 600;
+				color: #333;
+			}
+			input[type='text'],
+			input[type='number'] {
+				padding: 0.55rem 0.75rem;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				font-size: 0.95rem;
+				width: 100%;
+				box-sizing: border-box;
+			}
+			input:focus {
+				outline: none;
+				border-color: #1a1a2e;
+			}
+			.btn {
+				padding: 0.6rem 1.1rem;
+				border: none;
+				border-radius: 8px;
+				font-size: 0.95rem;
+				cursor: pointer;
+				transition: opacity 0.15s ease;
+			}
+			.btn:hover { opacity: 0.82; }
+			.btn-primary  { background: #1a1a2e; color: white; }
+			.btn-secondary { background: #eee; color: #1a1a2e; }
+			.status {
+				min-height: 1.1rem;
+				font-size: 0.88rem;
+				margin-top: 0.5rem;
+			}
+			.status.error   { color: #b00020; }
+			.status.success { color: #2e7d32; }
+			.result-card {
+				border: 1px solid #e2e2e2;
+				border-radius: 10px;
+				padding: 1rem 1.25rem;
+				background: #fafafa;
+				max-width: 480px;
+				margin-top: 0.75rem;
+				font-size: 0.9rem;
+			}
+			.result-card h3 { margin: 0 0 0.4rem 0; font-size: 1rem; }
+			.meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem 1.2rem;
+				color: #444;
+			}
+			.meta span strong { color: #111; }
+			.divider {
+				margin: 2.5rem 0;
+				border: none;
+				border-top: 1px solid #e2e2e2;
+			}
+			.search-row {
+				display: flex;
+				gap: 0.6rem;
+				align-items: center;
+				max-width: 480px;
+				margin-top: 1rem;
+			}
+			.search-row input { flex: 1; }
+			.tx-list {
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+				margin-top: 1rem;
+				max-height: 420px;
+				overflow-y: auto;
+			}
+			.tx-card {
+				border: 1px solid #e2e2e2;
+				border-radius: 10px;
+				padding: 0.85rem 1.1rem;
+				background: #fafafa;
+				font-size: 0.88rem;
+			}
+			.tx-card .tx-header {
+				display: flex;
+				justify-content: space-between;
+				font-weight: 600;
+				margin-bottom: 0.35rem;
+				font-size: 0.95rem;
+			}
+			.tx-card .tx-meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.3rem 1rem;
+				color: #555;
+			}
+			.empty-state { color: #888; font-style: italic; }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="prose">
+                            <div>
+				<h2>Transferir dinero</h2>
+				<p>Completa los datos para realizar una transferencia entre cuentas.</p>
+
+				<div class="tx-form">
+					<div class="field">
+						<label for="sender">Cuenta remitente</label>
+						<input id="sender" type="text" placeholder="ACC001" />
+					</div>
+					<div class="field">
+						<label for="receiver">Cuenta receptora</label>
+						<input id="receiver" type="text" placeholder="ACC002" />
+					</div>
+					<div class="field">
+						<label for="amount">Monto</label>
+						<input id="amount" type="number" step="0.01" min="0.01" placeholder="100.00" />
+					</div>
+					<button id="btn-transfer" class="btn btn-primary">Transferir</button>
+				</div>
+
+				<p id="transfer-status" class="status"></p>
+				<div id="transfer-result" class="result-card" style="display:none;"></div>
+
+				<hr class="divider" />
+                            </div>
+                            <div>
+				<h2>Transacciones por cuenta</h2>
+				<p>Ingresa un número de cuenta para ver sus movimientos.</p>
+
+				<div class="search-row">
+					<input id="account-search" type="text" placeholder="ACC001" />
+					<button id="btn-search" class="btn btn-secondary">Consultar</button>
+				</div>
+
+				<p id="search-status" class="status"></p>
+				<div id="transactions-list" class="tx-list"></div>
+                            </div>
+			</div>
+		</main>
+		<Footer />
+
+		<script define:vars={{ API_BASE }}>
+			const btnTransfer     = document.getElementById('btn-transfer');
+			const transferStatus  = document.getElementById('transfer-status');
+			const transferResult  = document.getElementById('transfer-result');
+
+			function setStatus(el, msg, type) {
+				el.textContent = msg;
+				el.className = `status ${type}`;
+			}
+
+			btnTransfer.addEventListener('click', async () => {
+				const sender   = document.getElementById('sender').value.trim();
+				const receiver = document.getElementById('receiver').value.trim();
+				const amount   = parseFloat(document.getElementById('amount').value);
+
+				if (!sender || !receiver || isNaN(amount) || amount <= 0) {
+					setStatus(transferStatus, 'Completa todos los campos correctamente.', 'error');
+					return;
+				}
+
+				setStatus(transferStatus, 'Procesando transferencia...', '');
+				transferResult.style.display = 'none';
+
+				try {
+					const res = await fetch(`${API_BASE}/transactions`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							senderAccountNumber: sender,
+							receiverAccountNumber: receiver,
+							amount,
+							timestamp: new Date().toISOString(),
+						}),
+					});
+
+					if (!res.ok) {
+						const errText = await res.text();
+						setStatus(transferStatus, errText || `Error ${res.status}`, 'error');
+						return;
+					}
+
+					const tx = await res.json();
+					setStatus(transferStatus, 'Transferencia realizada exitosamente.', 'success');
+					transferResult.style.display = 'block';
+					transferResult.innerHTML = `
+						<h3>✅ Transferencia #${tx.id}</h3>
+						<div class="meta">
+							<span><strong>De:</strong> ${tx.senderAccountNumber}</span>
+							<span><strong>A:</strong> ${tx.receiverAccountNumber}</span>
+							<span><strong>Monto:</strong> $${tx.amount}</span>
+							<span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
+						</div>
+					`;
+				} catch (err) {
+					setStatus(transferStatus, 'No se pudo conectar con el backend.', 'error');
+				}
+			});
+
+			const btnSearch        = document.getElementById('btn-search');
+			const searchStatus     = document.getElementById('search-status');
+			const transactionsList = document.getElementById('transactions-list');
+
+			btnSearch.addEventListener('click', async () => {
+				const account = document.getElementById('account-search').value.trim();
+
+				if (!account) {
+					setStatus(searchStatus, 'Ingresa un número de cuenta.', 'error');
+					return;
+				}
+
+				setStatus(searchStatus, 'Buscando transacciones...', '');
+				transactionsList.innerHTML = '';
+
+				try {
+					const res = await fetch(`${API_BASE}/transactions/${account}`);
+
+					if (!res.ok) {
+						const errText = await res.text();
+						setStatus(searchStatus, errText || `Error ${res.status}`, 'error');
+						return;
+					}
+
+					const data = await res.json();
+
+					if (!data || data.length === 0) {
+						setStatus(searchStatus, `Sin movimientos para la cuenta ${account}.`, 'error');
+						transactionsList.innerHTML = '<p class="empty-state">No se encontraron transacciones.</p>';
+						return;
+					}
+
+					setStatus(searchStatus, `${data.length} transacción(es) encontrada(s).`, 'success');
+					transactionsList.innerHTML = data.map(tx => `
+						<div class="tx-card">
+							<div class="tx-header">
+								<span>Transacción #${tx.id}</span>
+								<span>$${tx.amount}</span>
+							</div>
+							<div class="tx-meta">
+								<span><strong>De:</strong> ${tx.senderAccountNumber}</span>
+								<span><strong>A:</strong> ${tx.receiverAccountNumber}</span>
+								<span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
+							</div>
+						</div>
+					`).join('');
+
+				} catch (err) {
+					setStatus(searchStatus, 'No se pudo conectar con el backend.', 'error');
+				}
+			});
+
+			document.getElementById('account-search').addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') btnSearch.click();
+			});
+		</script>
+	</body>
+</html>
