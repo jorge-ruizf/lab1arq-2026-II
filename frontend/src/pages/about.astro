@@ -146,6 +146,9 @@ const API_BASE = 'http://localhost:8088/api';
 				color: #555;
 			}
 			.empty-state { color: #888; font-style: italic; }
+
+			.amount-negative { color: #b00020; font-weight: 700; }
+			.amount-positive { color: #2e7d32; font-weight: 700; }
 		</style>
 	</head>
 	<body>
@@ -284,19 +287,24 @@ const API_BASE = 'http://localhost:8088/api';
 					}
 
 					setStatus(searchStatus, `${data.length} transacción(es) encontrada(s).`, 'success');
-					transactionsList.innerHTML = data.map(tx => `
-						<div class="tx-card">
-							<div class="tx-header">
-								<span>Transacción #${tx.id}</span>
-								<span>$${tx.amount}</span>
-							</div>
-							<div class="tx-meta">
-								<span><strong>De:</strong> ${tx.senderAccountNumber}</span>
-								<span><strong>A:</strong> ${tx.receiverAccountNumber}</span>
-								<span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
-							</div>
-						</div>
-					`).join('');
+					transactionsList.innerHTML = data.map(tx => {
+					    const isSender = tx.senderAccountNumber === account;
+					    const sign = isSender ? '-' : '+';
+					    const signClass = isSender ? 'amount-negative' : 'amount-positive';
+
+					    return `
+					    <div class="tx-card">
+					        <div class="tx-header">
+					            <span>Transacción #${tx.id}</span>
+					            <span class="${signClass}">${sign}$${tx.amount}</span>
+					        </div>
+		                    <div class="tx-meta">
+				                <span><strong>${isSender ? 'Para' : 'De'}:</strong> ${isSender ? tx.receiverAccountNumber : tx.senderAccountNumber}</span>
+				                <span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
+				            </div>
+		                </div>
+		            `;
+		        }).join('');
 
 				} catch (err) {
 					setStatus(searchStatus, 'No se pudo conectar con el backend.', 'error');
