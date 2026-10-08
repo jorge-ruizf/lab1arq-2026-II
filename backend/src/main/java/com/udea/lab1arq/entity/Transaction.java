@@ -21,6 +21,7 @@ public class Transaction {
     @Column(nullable = false)
     private Double amount;
 
+    @Column(name = "transaction_timestamp", nullable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
 
     public Transaction() {

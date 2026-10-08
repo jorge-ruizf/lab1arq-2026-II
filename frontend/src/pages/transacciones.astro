@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TransactionSearch from '../components/TransactionSearch.astro';
+import TransferForm from '../components/TransferForm.astro';
+---
+<BaseLayout title="Transacciones" description="Transferencias y consulta de movimientos">
+	<main>
+		<div class="prose">
+			<div>
+				<TransferForm />
+			</div>
+			<div>
+				<TransactionSearch />
+			</div>
+		</div>
+	</main>
+</BaseLayout>
+
+<style>
+	main {
+		width: calc(100% - 2em);
+		max-width: 100%;
+		margin: 0;
+	}
+	.prose {
+		width: 920px;
+		max-width: calc(100% - 2em);
+		margin: auto;
+		padding: 1em;
+		color: rgb(var(--gray-dark));
+		display: flex;
+		justify-content: space-between;
+		align-items: space-between;
+	}
+	.prose > div {
+		width:45%;
+	}
+</style>
+
+<script>
+	import { ApiError, getTransactionsByAccount, transfer } from '../services/api';
+
+	const btnTransfer = document.getElementById('btn-transfer');
+	const transferStatus = document.getElementById('transfer-status');
+	const transferResult = document.getElementById('transfer-result');
+
+	function setStatus(el, msg, type) {
+		el.textContent = msg;
+		el.className = `status ${type}`;
+	}
+
+	btnTransfer.addEventListener('click', async () => {
+		const sender = document.getElementById('sender').value.trim();
+		const receiver = document.getElementById('receiver').value.trim();
+		const amount = parseFloat(document.getElementById('amount').value);
+
+		if (!sender || !receiver || isNaN(amount) || amount <= 0) {
+			setStatus(transferStatus, 'Completa todos los campos correctamente.', 'error');
+			return;
+		}
+
+		setStatus(transferStatus, 'Procesando transferencia...', '');
+		transferResult.style.display = 'none';
+
+		try {
+			const tx = await transfer({
+				senderAccountNumber: sender,
+				receiverAccountNumber: receiver,
+				amount,
+				timestamp: new Date().toISOString(),
+			});
+
+			setStatus(transferStatus, 'Transferencia realizada exitosamente.', 'success');
+			transferResult.style.display = 'block';
+			transferResult.innerHTML = `
+				<h3>✅ Transferencia #${tx.id}</h3>
+				<div class="meta">
+					<span><strong>De:</strong> ${tx.senderAccountNumber}</span>
+					<span><strong>A:</strong> ${tx.receiverAccountNumber}</span>
+					<span><strong>Monto:</strong> $${tx.amount}</span>
+					<span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
+				</div>
+			`;
+		} catch (err) {
+			if (err instanceof ApiError) {
+				setStatus(transferStatus, err.message, 'error');
+				return;
+			}
+			setStatus(transferStatus, 'No se pudo conectar con el backend.', 'error');
+		}
+	});
+
+	const btnSearch = document.getElementById('btn-search');
+	const searchStatus = document.getElementById('search-status');
+	const transactionsList = document.getElementById('transactions-list');
+
+	btnSearch.addEventListener('click', async () => {
+		const account = document.getElementById('account-search').value.trim();
+
+		if (!account) {
+			setStatus(searchStatus, 'Ingresa un número de cuenta.', 'error');
+			return;
+		}
+
+		setStatus(searchStatus, 'Buscando transacciones...', '');
+		transactionsList.innerHTML = '';
+
+		try {
+			const data = await getTransactionsByAccount(account);
+
+			if (!data || data.length === 0) {
+				setStatus(searchStatus, `Sin movimientos para la cuenta ${account}.`, 'error');
+				transactionsList.innerHTML = '<p class="empty-state">No se encontraron transacciones.</p>';
+				return;
+			}
+
+			setStatus(searchStatus, `${data.length} transacción(es) encontrada(s).`, 'success');
+			transactionsList.innerHTML = data.map(tx => {
+				const isSender = tx.senderAccountNumber === account;
+				const sign = isSender ? '-' : '+';
+				const signClass = isSender ? 'amount-negative' : 'amount-positive';
+
+				return `
+			    <div class="tx-card">
+			        <div class="tx-header">
+			            <span>Transacción #${tx.id}</span>
+			            <span class="${signClass}">${sign}$${tx.amount}</span>
+			        </div>
+	                <div class="tx-meta">
+		                <span><strong>${isSender ? 'Para' : 'De'}:</strong> ${isSender ? tx.receiverAccountNumber : tx.senderAccountNumber}</span>
+		                <span><strong>Fecha:</strong> ${tx.timestamp ? new Date(tx.timestamp).toLocaleString('es-CO') : '-'}</span>
+		            </div>
+	            </div>
+	        `;
+			}).join('');
+		} catch (err) {
+			if (err instanceof ApiError) {
+				setStatus(searchStatus, err.message, 'error');
+				return;
+			}
+			setStatus(searchStatus, 'No se pudo conectar con el backend.', 'error');
+		}
+	});
+
+	document.getElementById('account-search').addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') btnSearch.click();
+	});
+</script>

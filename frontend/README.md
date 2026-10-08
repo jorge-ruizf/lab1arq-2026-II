@@ -1,63 +1,38 @@
-# Astro Starter Kit: Blog
+# UniBank — Frontend
 
-```sh
-npm create astro@latest -- --template blog
-```
+Sitio estático en [Astro](https://astro.build) para la gestión de clientes, transferencias y transacciones del backend Spring Boot.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Estructura
 
 ```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/
+├── components/    Componentes reutilizables (Header, Footer, formularios, botones)
+├── layouts/       BaseLayout.astro (html/head/header/footer reutilizables)
+├── pages/         Una ruta por pantalla (/, /crear-cliente, /transacciones)
+├── services/      api.ts: cliente centralizado de la API REST
+├── styles/        CSS global
+└── config.ts      Constantes del sitio (SITE_TITLE, SITE_DESCRIPTION)
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Configuración
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Copia `.env.example` a `.env` y ajusta la URL del backend:
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+```sh
+cp .env.example .env
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+| Variable         | Descripción                    | Ejemplo                     |
+| ---------------- | ------------------------------ | --------------------------- |
+| `PUBLIC_API_URL` | URL base del backend (API REST) | `http://localhost:8088/api` |
 
-## 🧞 Commands
+En Cloudflare debes definir `PUBLIC_API_URL` en las variables de entorno del proyecto (build).
 
-All commands are run from the root of the project, from a terminal:
+## Comandos
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+| Command         | Acción                                        |
+| --------------- | --------------------------------------------- |
+| `npm install`   | Instala dependencias                          |
+| `npm run dev`   | Servidor de desarrollo en `localhost:4321`    |
+| `npm run build` | Build de producción en `./dist/`              |
+| `npm run preview` | Vista previa del build                      |

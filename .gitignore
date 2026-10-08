@@ -1,0 +1,10 @@
+# Variables de entorno locales (los .env.example sí se versionan)
+.env
+.env.*
+!.env.example
+
+# Dependencias y artefactos de build
+node_modules/
+.astro/
+dist/
+target/

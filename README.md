@@ -1,3 +1,5 @@
+[![CI/CD Pipeline](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml/badge.svg)](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml)
+
 # UdeaBank — Lab 1 Arquitectura de Software
 
 
@@ -12,17 +14,19 @@ docker compose up --build
 |------------|------------------------------|
 | Frontend   | http://localhost:4321        |
 | Backend    | http://localhost:8088/api    |
-| Base de datos | localhost:3307 (MySQL)    |
+| Base de datos | localhost:5433 (PostgreSQL 16)  |
 
 ---
 
 ## Stack tecnológico
 
-**Backend** — Java 17 con Spring Boot 4, arquitectura REST. Persistencia con Spring Data JPA + Hibernate sobre MySQL 8. Build con Maven.
+**Backend** — Java 17 con Spring Boot 4, arquitectura REST. Persistencia con Spring Data JPA + Hibernate sobre PostgreSQL. Build con Maven.
 
 **Frontend** — Astro, consumiendo los endpoints REST mediante fetch nativo desde el cliente. Sin frameworks adicionales.
 
-**Base de datos** — MySQL 8 en contenedor Docker con volumen persistente.
+**Base de datos** — PostgreSQL 16 en contenedor Docker con volumen persistente.
+
+**Variables de entorno** — ver [ENV.md](ENV.md).
 
 **Infraestructura** — Docker + Docker Compose orquestando los tres servicios (frontend, backend, db) con healthcheck y dependencias entre contenedores.
 
