@@ -5,12 +5,21 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.8</version>
+    <version>>4.0.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.udea</groupId>
 	<artifactId>lab1arq</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+		<java.version>17</java.version>
+		<sonar.projectKey>jorge-ruizf_lab1arq-2026-II</sonar.projectKey>
+		<sonar.organization>jorge-ruizf</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+	</properties>
+
 	<name/>
 	<description/>
 	<url/>
