@@ -1,0 +1,7 @@
+{
+  "name": "lab1arq-2026-ii",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
