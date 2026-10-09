@@ -15,17 +15,31 @@
 
 
 
-## ▶️ Ejecución rápida
+## 🚀 Servicios desplegados
+
+
+| Servicio      | URL                                              |
+|---------------|--------------------------------------------------|
+| Frontend      | https://lab1arq-2026-ii.jorge-ruizf.workers.dev/ |
+| Backend       | https://lab1arq-2026-ii.onrender.com             |
+| Base de datos | desplegada en Neon                               |
+
+
+
+
+## ▶️ Ejecución en local
 
 ```bash
 docker compose up --build
 ```
 
-| Servicio   | URL                          |
-|------------|------------------------------|
-| Frontend   | http://localhost:4321        |
-| Backend    | http://localhost:8088/api    |
-| Base de datos | localhost:5433 (PostgreSQL 16)  |
+| Servicio      | URL                       |
+|---------------|---------------------------|
+| Frontend      | http://localhost:4321     |
+| Backend       | http://localhost:8088/api |
+| Base de datos | http://localhost:5433     |
+
+encontraras una guía de las variables de entorno en .ENV.md
 
 ---
 
@@ -52,5 +66,6 @@ docker compose up --build
 | POST | `/api/customers` | Crear cliente |
 | POST | `/api/transactions` | Transferir dinero entre cuentas |
 | GET | `/api/transactions/{accountNumber}` | Transacciones de una cuenta |
+
 
 &copy; Jorge Andrés Ruiz Flores - 08/Sept/2026 
