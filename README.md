@@ -1,4 +1,5 @@
 [![CI/CD Pipeline](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml/badge.svg)](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
 
 # UdeaBank — Lab 1 Arquitectura de Software
 
