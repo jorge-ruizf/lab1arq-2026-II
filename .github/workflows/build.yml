@@ -74,4 +74,42 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+  # Build's job
+  build:
+    name: Build & Package
+    needs: sonar
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend   # Se posiciona dentro de backend/
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: maven              # Maneja el caché de Maven de forma nativa sin actions/cache
+
+      - name: Build JAR with Maven
+        run: mvn -B package -DskipTests
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: springboot-app-jar
+          path: backend/target/*.jar  # Ruta relativa desde la raíz del repo
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: TU_USUARIO_DOCKER/TU_NOMBRE_REPOS_DOCKER   # Ej: dbotiaudea/interstellar-ice-backend
+          tags: latest
+          registry: docker.io
+          directory: backend                                # Especifica la carpeta raíz para Docker
+          dockerfile: backend/Dockerfile                    # Ruta exacta del Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
