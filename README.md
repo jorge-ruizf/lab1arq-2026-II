@@ -1,5 +1,15 @@
 [![CI/CD Pipeline](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml/badge.svg)](https://github.com/jorge-ruizf/lab1arq-2026-II/actions/workflows/build.yml)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Maintainability issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_maintainability_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Reliability issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_reliability_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
+[![Security issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_security_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
 
 # UdeaBank — Lab 1 Arquitectura de Software
 
