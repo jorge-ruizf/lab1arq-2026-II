@@ -5,20 +5,19 @@ import com.udea.lab1arq.entity.Customer;
 import com.udea.lab1arq.entity.Transaction;
 import com.udea.lab1arq.repository.CustomerRepository;
 import com.udea.lab1arq.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository; // Para validar cuentas
+    private final CustomerRepository customerRepository; // Para validar cuentas
 
     public TransactionDTO transferMoney(TransactionDTO transactionDTO) {
         // Validar que los números de cuenta no sean nulos
