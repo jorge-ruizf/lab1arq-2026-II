@@ -3,7 +3,7 @@ package com.udea.lab1arq.controller;
 
 import com.udea.lab1arq.DTO.TransactionDTO;
 import com.udea.lab1arq.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value="/api/transactions", produces = "application/json")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
 
     @PostMapping
