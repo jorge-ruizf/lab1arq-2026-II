@@ -7,10 +7,12 @@ on:
   # Run on push to main
   push:
     branches:
-      - main
+      - '**'
   # Run on pull requests (needed for SonarCloud PR analysis)
   pull_request:
     types: [opened, synchronize, reopened]
+    branches:
+      - '**'
 
 jobs:
   tests:
