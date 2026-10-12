@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend   # el pom.xml está en backend/
+        working-directory: backend
     steps:
       - uses: actions/checkout@v5
 
@@ -39,6 +39,15 @@ jobs:
 
       - name: Run Tests
         run: mvn -B test
+
+      - name: Generate JaCoCo report
+        run: mvn -B jacoco:report
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: backend/target/site/jacoco/jacoco.xml
 
   sonar:
     name: SonarCloud analysis
