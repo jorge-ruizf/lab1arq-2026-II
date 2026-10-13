@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-
-    private final CustomerRepository customerRepository; // Para validar cuentas
+    private final CustomerRepository customerRepository;
 
     public TransactionDTO transferMoney(TransactionDTO transactionDTO) {
         // Validar que los números de cuenta no sean nulos
@@ -30,11 +29,10 @@ public class TransactionService {
                 .orElseThrow(() -> new IllegalArgumentException("La cuenta del remitente no existe."));
         Customer receiver = customerRepository.findByAccountNumber(transactionDTO.getReceiverAccountNumber())
                 .orElseThrow(() -> new IllegalArgumentException("La cuenta del receptor no existe."));
-//    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+
         // Validar que el remitente tenga saldo suficiente
         if (sender.getBalance() < transactionDTO.getAmount()) {
             throw new IllegalArgumentException("Saldo insuficiente en la cuenta del remitente.");
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");
         }
 
         // Realizar la transferencia
@@ -44,7 +42,6 @@ public class TransactionService {
         // Guardar los cambios en las cuentas
         customerRepository.save(sender);
         customerRepository.save(receiver);
-
 
         // Crear y guardar la transacción
         Transaction transaction = new Transaction();
