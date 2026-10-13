@@ -10,7 +10,7 @@
 [![Maintainability issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_maintainability_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
 [![Reliability issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_reliability_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
 [![Security issues](https://sonarcloud.io/api/project_badges/measure?project=jorge-ruizf_lab1arq-2026-II&metric=software_quality_security_issues)](https://sonarcloud.io/summary/new_code?id=jorge-ruizf_lab1arq-2026-II)
-[![Coverage Status](https://coveralls.io/repos/github/jorge-ruizf/lab1arq-2026-II/badge.svg?branch=feat/coveralls)](https://coveralls.io/github/jorge-ruizf/lab1arq-2026-II?branch=feat/coveralls)
+[![Coverage Status](https://coveralls.io/repos/github/jorge-ruizf/lab1arq-2026-II/badge.svg?branch=main)](https://coveralls.io/github/jorge-ruizf/lab1arq-2026-II?branch=main)
 
 # UdeaBank — Lab 1 Arquitectura de Software
 
