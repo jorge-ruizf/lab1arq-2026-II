@@ -40,6 +40,14 @@ jobs:
       - name: Run Tests
         run: mvn -B test
 
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=backend/pom.xml --severity-threshold=high
+        continue-on-error: true 
+
       - name: Generate JaCoCo report
         run: mvn -B jacoco:report
 

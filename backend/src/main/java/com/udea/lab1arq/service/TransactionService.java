@@ -5,20 +5,18 @@ import com.udea.lab1arq.entity.Customer;
 import com.udea.lab1arq.entity.Transaction;
 import com.udea.lab1arq.repository.CustomerRepository;
 import com.udea.lab1arq.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository; // Para validar cuentas
+    private final TransactionRepository transactionRepository;
+    private final CustomerRepository customerRepository;
 
     public TransactionDTO transferMoney(TransactionDTO transactionDTO) {
         // Validar que los números de cuenta no sean nulos
@@ -31,11 +29,10 @@ public class TransactionService {
                 .orElseThrow(() -> new IllegalArgumentException("La cuenta del remitente no existe."));
         Customer receiver = customerRepository.findByAccountNumber(transactionDTO.getReceiverAccountNumber())
                 .orElseThrow(() -> new IllegalArgumentException("La cuenta del receptor no existe."));
-//    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+
         // Validar que el remitente tenga saldo suficiente
         if (sender.getBalance() < transactionDTO.getAmount()) {
             throw new IllegalArgumentException("Saldo insuficiente en la cuenta del remitente.");
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance");
         }
 
         // Realizar la transferencia
@@ -45,7 +42,6 @@ public class TransactionService {
         // Guardar los cambios en las cuentas
         customerRepository.save(sender);
         customerRepository.save(receiver);
-
 
         // Crear y guardar la transacción
         Transaction transaction = new Transaction();
